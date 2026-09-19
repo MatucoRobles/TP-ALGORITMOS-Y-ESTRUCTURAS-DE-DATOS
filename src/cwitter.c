@@ -28,6 +28,17 @@ void encolarUsuario(ColaUsuarios* c, Usuario u) {
     c->final = nuevo;
 }
 
+Usuario* buscarUsuario(ColaUsuarios* c, const char* nombre) {
+    NodoUsuario* actual = c->frente;
+    while (actual != NULL) {
+        if (strcmp(actual->data.nombre_usuario, nombre) == 0) {
+            return &(actual->data);
+        }
+        actual = actual->siguiente;
+    }
+    return NULL;
+}
+
 /* --- Implementación: Cola de Tweets --- */
 
 void inicializarColaTweets(ColaTweets* c) {

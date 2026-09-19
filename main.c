@@ -1,19 +1,60 @@
 #include "include/cwitter.h"
 
+void menuPrincipal() {
+    printf("\n--- Menú Cwitter ---\n");
+    printf("1. Registrarse\n");
+    printf("2. Iniciar Sesión\n");
+    printf("0. Salir\n");
+    printf("Seleccione una opción: ");
+}
+
+void registrarUsuarioUI(ColaUsuarios* cola) {
+    Usuario nuevo;
+    printf("\n--- Registro de Usuario ---\n");
+    printf("Nombre de usuario: ");
+    scanf("%s", nuevo.nombre_usuario);
+
+    if (buscarUsuario(cola, nuevo.nombre_usuario) != NULL) {
+        printf("Error: El nombre de usuario ya existe.\n");
+        return;
+    }
+
+    printf("Clave: ");
+    scanf("%s", nuevo.clave);
+
+    encolarUsuario(cola, nuevo);
+    printf("Usuario registrado exitosamente.\n");
+}
+
 int main() {
     ColaUsuarios cola_usuarios;
     ColaTweets cola_tweets;
-    char *usuario_logueado = NULL;
+    int opcion;
 
     /* Inicialización de estructuras */
     inicializarColaUsuarios(&cola_usuarios);
     inicializarColaTweets(&cola_tweets);
 
-    printf("--- Bienvenido a Cwitter ---\n");
-    printf("Sistema iniciado con estructuras de Cola.\n");
+    do {
+        menuPrincipal();
+        scanf("%d", &opcion);
 
-    /* TODO: Cargar datos desde persistencia */
-    /* TODO: Implementar menú principal y lógica de flujo */
+        switch (opcion) {
+            case 1:
+                registrarUsuarioUI(&cola_usuarios);
+                break;
+            case 2:
+                printf("Funcionalidad de Login en desarrollo (Paso 3.3).\n");
+                break;
+            case 0:
+                printf("Saliendo de Cwitter...\n");
+                break;
+            default:
+                printf("Opción no válida.\n");
+        }
+    } while (opcion != 0);
+
+    /* TODO: Liberar memoria de las colas antes de salir */
 
     return 0;
 }

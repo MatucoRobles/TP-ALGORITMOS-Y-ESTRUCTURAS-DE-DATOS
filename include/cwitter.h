@@ -47,7 +47,8 @@ typedef struct {
 void inicializarColaUsuarios(ColaUsuarios* c);
 int estaVaciaUsuarios(ColaUsuarios* c);
 void encolarUsuario(ColaUsuarios* c, Usuario u);
-/* Operaciones adicionales: buscar, login, persistencia */
+Usuario* buscarUsuario(ColaUsuarios* c, const char* nombre);
+/* Operaciones adicionales: login, persistencia */
 
 /* --- Funciones de Gestión de Tweets (Cola) --- */
 void inicializarColaTweets(ColaTweets* c);
