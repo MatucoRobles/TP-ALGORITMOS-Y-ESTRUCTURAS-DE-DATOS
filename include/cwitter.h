@@ -57,6 +57,7 @@ int estaVaciaTweets(ColaTweets* c);
 void encolarTweet(ColaTweets* c, Tweet t);
 int generarSiguienteIdTweet(ColaTweets* c);
 Tweet* buscarTweet(ColaTweets* c, int id, const char* autor);
-/* Operaciones adicionales: eliminar, mostrar feed, buscar, persistencia */
+int eliminarTweet(ColaTweets* c, int id, const char* autor);
+/* Operaciones adicionales: mostrar feed, buscar, persistencia */
 
 #endif /* CWITTER_H */

@@ -10,6 +10,7 @@ void menuPrincipal(Usuario* logueado) {
         printf("3. Publicar Tweet (Paso 3.4)\n");
         printf("4. Ver Feed (Paso 3.7)\n");
         printf("6. Modificar Tweet\n");
+        printf("7. Eliminar Tweet\n");
         printf("5. Cerrar Sesión\n");
     }
     printf("0. Salir\n");
@@ -89,6 +90,19 @@ void modificarTweetUI(ColaTweets* cola, Usuario* usuario) {
     printf("Tweet modificado con éxito.\n");
 }
 
+void eliminarTweetUI(ColaTweets* cola, Usuario* usuario) {
+    int id;
+    printf("\n--- Eliminar Tweet ---\n");
+    printf("Ingrese el ID del tweet a eliminar: ");
+    scanf("%d", &id);
+
+    if (eliminarTweet(cola, id, usuario->nombre_usuario)) {
+        printf("Tweet eliminado con éxito.\n");
+    } else {
+        printf("Error: Tweet no encontrado o no autorizado.\n");
+    }
+}
+
 Usuario* loginUI(ColaUsuarios* cola) {
     char nombre[MAX_USUARIO];
     char clave[MAX_CLAVE];
@@ -138,6 +152,10 @@ int main() {
             case 6:
                 if (usuario_logueado != NULL) modificarTweetUI(&cola_tweets, usuario_logueado);
                 else printf("Debes iniciar sesión para modificar.\n");
+                break;
+            case 7:
+                if (usuario_logueado != NULL) eliminarTweetUI(&cola_tweets, usuario_logueado);
+                else printf("Debes iniciar sesión para eliminar.\n");
                 break;
             case 5:
                 if (usuario_logueado != NULL) {

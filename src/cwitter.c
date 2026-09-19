@@ -97,3 +97,27 @@ Tweet* buscarTweet(ColaTweets* c, int id, const char* autor) {
     }
     return NULL;
 }
+
+int eliminarTweet(ColaTweets* c, int id, const char* autor) {
+    if (estaVaciaTweets(c)) return 0;
+
+    NodoTweet* actual = c->frente;
+    NodoTweet* anterior = NULL;
+
+    while (actual != NULL) {
+        if (actual->data.id == id && strcmp(actual->data.autor, autor) == 0) {
+            if (anterior == NULL) {
+                c->frente = actual->siguiente;
+                if (c->frente == NULL) c->final = NULL;
+            } else {
+                anterior->siguiente = actual->siguiente;
+                if (actual->siguiente == NULL) c->final = anterior;
+            }
+            free(actual);
+            return 1;
+        }
+        anterior = actual;
+        actual = actual->siguiente;
+    }
+    return 0;
+}
