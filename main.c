@@ -149,6 +149,9 @@ int main() {
                 if (usuario_logueado != NULL) publicarTweetUI(&cola_tweets, usuario_logueado);
                 else printf("Debes iniciar sesión para publicar.\n");
                 break;
+            case 4:
+                mostrarFeed(&cola_tweets);
+                break;
             case 6:
                 if (usuario_logueado != NULL) modificarTweetUI(&cola_tweets, usuario_logueado);
                 else printf("Debes iniciar sesión para modificar.\n");

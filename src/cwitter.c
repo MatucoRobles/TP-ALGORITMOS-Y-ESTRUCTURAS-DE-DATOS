@@ -121,3 +121,17 @@ int eliminarTweet(ColaTweets* c, int id, const char* autor) {
     }
     return 0;
 }
+
+void mostrarFeed(ColaTweets* c) {
+    if (estaVaciaTweets(c)) {
+        printf("\nEl feed está vacío.\n");
+        return;
+    }
+
+    printf("\n--- Feed Global ---\n");
+    NodoTweet* actual = c->frente;
+    while (actual != NULL) {
+        printf("[%d] @%s: %s\n", actual->data.id, actual->data.autor, actual->data.contenido);
+        actual = actual->siguiente;
+    }
+}
