@@ -39,6 +39,14 @@ Usuario* buscarUsuario(ColaUsuarios* c, const char* nombre) {
     return NULL;
 }
 
+Usuario* autenticarUsuario(ColaUsuarios* c, const char* nombre, const char* clave) {
+    Usuario* u = buscarUsuario(c, nombre);
+    if (u != NULL && strcmp(u->clave, clave) == 0) {
+        return u;
+    }
+    return NULL;
+}
+
 /* --- Implementación: Cola de Tweets --- */
 
 void inicializarColaTweets(ColaTweets* c) {

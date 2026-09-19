@@ -1,9 +1,16 @@
 #include "include/cwitter.h"
 
-void menuPrincipal() {
+void menuPrincipal(Usuario* logueado) {
     printf("\n--- Menú Cwitter ---\n");
-    printf("1. Registrarse\n");
-    printf("2. Iniciar Sesión\n");
+    if (logueado == NULL) {
+        printf("1. Registrarse\n");
+        printf("2. Iniciar Sesión\n");
+    } else {
+        printf("Usuario actual: @%s\n", logueado->nombre_usuario);
+        printf("3. Publicar Tweet (Paso 3.4)\n");
+        printf("4. Ver Feed (Paso 3.7)\n");
+        printf("5. Cerrar Sesión\n");
+    }
     printf("0. Salir\n");
     printf("Seleccione una opción: ");
 }
@@ -26,9 +33,29 @@ void registrarUsuarioUI(ColaUsuarios* cola) {
     printf("Usuario registrado exitosamente.\n");
 }
 
+Usuario* loginUI(ColaUsuarios* cola) {
+    char nombre[MAX_USUARIO];
+    char clave[MAX_CLAVE];
+    printf("\n--- Inicio de Sesión ---\n");
+    printf("Nombre de usuario: ");
+    scanf("%s", nombre);
+    printf("Clave: ");
+    scanf("%s", clave);
+
+    Usuario* u = autenticarUsuario(cola, nombre, clave);
+    if (u != NULL) {
+        printf("Bienvenido @%s!\n", u->nombre_usuario);
+        return u;
+    } else {
+        printf("Error: Usuario o clave incorrectos.\n");
+        return NULL;
+    }
+}
+
 int main() {
     ColaUsuarios cola_usuarios;
     ColaTweets cola_tweets;
+    Usuario* usuario_logueado = NULL;
     int opcion;
 
     /* Inicialización de estructuras */
@@ -36,21 +63,29 @@ int main() {
     inicializarColaTweets(&cola_tweets);
 
     do {
-        menuPrincipal();
+        menuPrincipal(usuario_logueado);
         scanf("%d", &opcion);
 
         switch (opcion) {
             case 1:
-                registrarUsuarioUI(&cola_usuarios);
+                if (usuario_logueado == NULL) registrarUsuarioUI(&cola_usuarios);
+                else printf("Ya tienes una sesión iniciada.\n");
                 break;
             case 2:
-                printf("Funcionalidad de Login en desarrollo (Paso 3.3).\n");
+                if (usuario_logueado == NULL) usuario_logueado = loginUI(&cola_usuarios);
+                else printf("Ya tienes una sesión iniciada.\n");
+                break;
+            case 5:
+                if (usuario_logueado != NULL) {
+                    printf("Sesión cerrada para @%s.\n", usuario_logueado->nombre_usuario);
+                    usuario_logueado = NULL;
+                } else printf("No hay sesión activa.\n");
                 break;
             case 0:
                 printf("Saliendo de Cwitter...\n");
                 break;
             default:
-                printf("Opción no válida.\n");
+                printf("Opción no válida o funcionalidad en desarrollo.\n");
         }
     } while (opcion != 0);
 

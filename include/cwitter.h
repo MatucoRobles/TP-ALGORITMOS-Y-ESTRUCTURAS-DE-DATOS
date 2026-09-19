@@ -48,7 +48,8 @@ void inicializarColaUsuarios(ColaUsuarios* c);
 int estaVaciaUsuarios(ColaUsuarios* c);
 void encolarUsuario(ColaUsuarios* c, Usuario u);
 Usuario* buscarUsuario(ColaUsuarios* c, const char* nombre);
-/* Operaciones adicionales: login, persistencia */
+Usuario* autenticarUsuario(ColaUsuarios* c, const char* nombre, const char* clave);
+/* Operaciones adicionales: persistencia */
 
 /* --- Funciones de Gestión de Tweets (Cola) --- */
 void inicializarColaTweets(ColaTweets* c);
