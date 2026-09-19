@@ -86,3 +86,14 @@ int generarSiguienteIdTweet(ColaTweets* c) {
     }
     return max_id + 1;
 }
+
+Tweet* buscarTweet(ColaTweets* c, int id, const char* autor) {
+    NodoTweet* actual = c->frente;
+    while (actual != NULL) {
+        if (actual->data.id == id && strcmp(actual->data.autor, autor) == 0) {
+            return &(actual->data);
+        }
+        actual = actual->siguiente;
+    }
+    return NULL;
+}

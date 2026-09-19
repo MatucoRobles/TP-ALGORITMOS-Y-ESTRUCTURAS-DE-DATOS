@@ -9,6 +9,7 @@ void menuPrincipal(Usuario* logueado) {
         printf("Usuario actual: @%s\n", logueado->nombre_usuario);
         printf("3. Publicar Tweet (Paso 3.4)\n");
         printf("4. Ver Feed (Paso 3.7)\n");
+        printf("6. Modificar Tweet\n");
         printf("5. Cerrar Sesión\n");
     }
     printf("0. Salir\n");
@@ -59,6 +60,35 @@ void publicarTweetUI(ColaTweets* cola, Usuario* usuario) {
     printf("Tweet publicado con éxito (ID: %d).\n", nuevo.id);
 }
 
+void modificarTweetUI(ColaTweets* cola, Usuario* usuario) {
+    int id;
+    printf("\n--- Modificar Tweet ---\n");
+    printf("Ingrese el ID del tweet a modificar: ");
+    scanf("%d", &id);
+
+    Tweet* t = buscarTweet(cola, id, usuario->nombre_usuario);
+    if (t == NULL) {
+        printf("Error: Tweet no encontrado o no autorizado.\n");
+        return;
+    }
+
+    printf("Contenido actual: %s\n", t->contenido);
+    printf("Nuevo contenido (máx 140 caracteres): ");
+    
+    char buffer[MAX_TWEET + 2];
+    fgets(buffer, sizeof(buffer), stdin);
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) return;
+    buffer[strcspn(buffer, "\n")] = 0;
+
+    if (strlen(buffer) > MAX_TWEET) {
+        printf("Error: El tweet supera los 140 caracteres.\n");
+        return;
+    }
+
+    strcpy(t->contenido, buffer);
+    printf("Tweet modificado con éxito.\n");
+}
+
 Usuario* loginUI(ColaUsuarios* cola) {
     char nombre[MAX_USUARIO];
     char clave[MAX_CLAVE];
@@ -104,6 +134,10 @@ int main() {
             case 3:
                 if (usuario_logueado != NULL) publicarTweetUI(&cola_tweets, usuario_logueado);
                 else printf("Debes iniciar sesión para publicar.\n");
+                break;
+            case 6:
+                if (usuario_logueado != NULL) modificarTweetUI(&cola_tweets, usuario_logueado);
+                else printf("Debes iniciar sesión para modificar.\n");
                 break;
             case 5:
                 if (usuario_logueado != NULL) {
