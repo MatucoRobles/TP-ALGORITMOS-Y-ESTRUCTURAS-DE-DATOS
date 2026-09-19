@@ -141,6 +141,8 @@ int main() {
     /* Inicialización de estructuras */
     inicializarColaUsuarios(&cola_usuarios);
     inicializarColaTweets(&cola_tweets);
+    cargarUsuarios(&cola_usuarios);
+    cargarTweets(&cola_tweets);
 
     do {
         menuPrincipal(usuario_logueado);
@@ -156,7 +158,10 @@ int main() {
                 else printf("Ya tienes una sesión iniciada.\n");
                 break;
             case 3:
-                if (usuario_logueado != NULL) publicarTweetUI(&cola_tweets, usuario_logueado);
+                if (usuario_logueado != NULL) {
+                    publicarTweetUI(&cola_tweets, usuario_logueado);
+                    guardarTweets(&cola_tweets);
+                }
                 else printf("Debes iniciar sesión para publicar.\n");
                 break;
             case 4:
@@ -166,11 +171,17 @@ int main() {
                 buscarTweetUI(&cola_tweets);
                 break;
             case 6:
-                if (usuario_logueado != NULL) modificarTweetUI(&cola_tweets, usuario_logueado);
+                if (usuario_logueado != NULL) {
+                    modificarTweetUI(&cola_tweets, usuario_logueado);
+                    guardarTweets(&cola_tweets);
+                }
                 else printf("Debes iniciar sesión para modificar.\n");
                 break;
             case 7:
-                if (usuario_logueado != NULL) eliminarTweetUI(&cola_tweets, usuario_logueado);
+                if (usuario_logueado != NULL) {
+                    eliminarTweetUI(&cola_tweets, usuario_logueado);
+                    guardarTweets(&cola_tweets);
+                }
                 else printf("Debes iniciar sesión para eliminar.\n");
                 break;
             case 5:
@@ -180,7 +191,9 @@ int main() {
                 } else printf("No hay sesión activa.\n");
                 break;
             case 0:
-                printf("Saliendo de Cwitter...\n");
+                guardarUsuarios(&cola_usuarios);
+                guardarTweets(&cola_tweets);
+                printf("Datos guardados. Saliendo de Cwitter...\n");
                 break;
             default:
                 printf("Opción no válida o funcionalidad en desarrollo.\n");

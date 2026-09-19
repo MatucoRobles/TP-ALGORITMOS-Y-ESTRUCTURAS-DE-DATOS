@@ -152,3 +152,45 @@ void buscarTweetsPorTermino(ColaTweets* c, const char* termino) {
         printf("No se encontraron tweets que coincidan.\n");
     }
 }
+
+void cargarUsuarios(ColaUsuarios* c) {
+    FILE* f = fopen("usuarios.txt", "r");
+    if (!f) return;
+    Usuario u;
+    while (fscanf(f, "%[^;];%s\n", u.nombre_usuario, u.clave) == 2) {
+        encolarUsuario(c, u);
+    }
+    fclose(f);
+}
+
+void guardarUsuarios(ColaUsuarios* c) {
+    FILE* f = fopen("usuarios.txt", "w");
+    if (!f) return;
+    NodoUsuario* actual = c->frente;
+    while (actual != NULL) {
+        fprintf(f, "%s;%s\n", actual->data.nombre_usuario, actual->data.clave);
+        actual = actual->siguiente;
+    }
+    fclose(f);
+}
+
+void cargarTweets(ColaTweets* c) {
+    FILE* f = fopen("tweets.txt", "r");
+    if (!f) return;
+    Tweet t;
+    while (fscanf(f, "%d;%[^;];%[^\n]\n", &t.id, t.autor, t.contenido) == 3) {
+        encolarTweet(c, t);
+    }
+    fclose(f);
+}
+
+void guardarTweets(ColaTweets* c) {
+    FILE* f = fopen("tweets.txt", "w");
+    if (!f) return;
+    NodoTweet* actual = c->frente;
+    while (actual != NULL) {
+        fprintf(f, "%d;%s;%s\n", actual->data.id, actual->data.autor, actual->data.contenido);
+        actual = actual->siguiente;
+    }
+    fclose(f);
+}

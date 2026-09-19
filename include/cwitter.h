@@ -60,6 +60,10 @@ Tweet* buscarTweet(ColaTweets* c, int id, const char* autor);
 int eliminarTweet(ColaTweets* c, int id, const char* autor);
 void mostrarFeed(ColaTweets* c);
 void buscarTweetsPorTermino(ColaTweets* c, const char* termino);
+void cargarUsuarios(ColaUsuarios* c);
+void guardarUsuarios(ColaUsuarios* c);
+void cargarTweets(ColaTweets* c);
+void guardarTweets(ColaTweets* c);
 /* Operaciones adicionales: persistencia */
 
 #endif /* CWITTER_H */
