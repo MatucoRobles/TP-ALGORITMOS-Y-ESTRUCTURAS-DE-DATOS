@@ -6,6 +6,7 @@ Este documento resume las normas de trabajo, desarrollo y entrega basadas en la 
 * **Repositorio:** Privado. Integrantes del grupo y profesores como colaboradores.
 * **Commits:** Deben ser frecuentes y descriptivos. No se permite un único commit al final del sprint.
 * **Ramas:** Uso de ramas para separar desarrollo de código estable (basado en GitFlow).
+* **Frecuencia de commits:** Se debe realizar un commit inmediatamente después de completar cada sub-índice definido en el archivo `sprint-X.md`.
 * **Identificación de Sprints:**
     * **Tags:** `v1-fundamentos`, `v2-procesamiento`, `v3-final`.
     * **Ramas:** Se debe usar su rama de `release` correspondiente.
