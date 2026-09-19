@@ -74,3 +74,15 @@ void encolarTweet(ColaTweets* c, Tweet t) {
     }
     c->final = nuevo;
 }
+
+int generarSiguienteIdTweet(ColaTweets* c) {
+    int max_id = 0;
+    NodoTweet* actual = c->frente;
+    while (actual != NULL) {
+        if (actual->data.id > max_id) {
+            max_id = actual->data.id;
+        }
+        actual = actual->siguiente;
+    }
+    return max_id + 1;
+}

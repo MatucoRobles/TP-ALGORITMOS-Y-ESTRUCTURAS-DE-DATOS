@@ -33,6 +33,32 @@ void registrarUsuarioUI(ColaUsuarios* cola) {
     printf("Usuario registrado exitosamente.\n");
 }
 
+void publicarTweetUI(ColaTweets* cola, Usuario* usuario) {
+    Tweet nuevo;
+    char buffer[MAX_TWEET + 2];
+    printf("\n--- Publicar Tweet ---\n");
+    printf("Contenido (máx 140 caracteres): ");
+    
+    /* Consumir el salto de línea anterior si existe */
+    fgets(buffer, sizeof(buffer), stdin);
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) return;
+
+    /* Eliminar el salto de línea de fgets */
+    buffer[strcspn(buffer, "\n")] = 0;
+
+    if (strlen(buffer) > MAX_TWEET) {
+        printf("Error: El tweet supera los 140 caracteres.\n");
+        return;
+    }
+
+    nuevo.id = generarSiguienteIdTweet(cola);
+    strcpy(nuevo.autor, usuario->nombre_usuario);
+    strcpy(nuevo.contenido, buffer);
+
+    encolarTweet(cola, nuevo);
+    printf("Tweet publicado con éxito (ID: %d).\n", nuevo.id);
+}
+
 Usuario* loginUI(ColaUsuarios* cola) {
     char nombre[MAX_USUARIO];
     char clave[MAX_CLAVE];
@@ -74,6 +100,10 @@ int main() {
             case 2:
                 if (usuario_logueado == NULL) usuario_logueado = loginUI(&cola_usuarios);
                 else printf("Ya tienes una sesión iniciada.\n");
+                break;
+            case 3:
+                if (usuario_logueado != NULL) publicarTweetUI(&cola_tweets, usuario_logueado);
+                else printf("Debes iniciar sesión para publicar.\n");
                 break;
             case 5:
                 if (usuario_logueado != NULL) {

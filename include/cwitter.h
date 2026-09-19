@@ -55,6 +55,7 @@ Usuario* autenticarUsuario(ColaUsuarios* c, const char* nombre, const char* clav
 void inicializarColaTweets(ColaTweets* c);
 int estaVaciaTweets(ColaTweets* c);
 void encolarTweet(ColaTweets* c, Tweet t);
+int generarSiguienteIdTweet(ColaTweets* c);
 /* Operaciones adicionales: eliminar, mostrar feed, buscar, persistencia */
 
 #endif /* CWITTER_H */
