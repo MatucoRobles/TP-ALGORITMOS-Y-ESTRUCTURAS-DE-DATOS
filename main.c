@@ -9,6 +9,7 @@ void menuPrincipal(Usuario* logueado) {
         printf("Usuario actual: @%s\n", logueado->nombre_usuario);
         printf("3. Publicar Tweet (Paso 3.4)\n");
         printf("4. Ver Feed (Paso 3.7)\n");
+        printf("8. Buscar Tweet\n");
         printf("6. Modificar Tweet\n");
         printf("7. Eliminar Tweet\n");
         printf("5. Cerrar Sesión\n");
@@ -103,6 +104,15 @@ void eliminarTweetUI(ColaTweets* cola, Usuario* usuario) {
     }
 }
 
+void buscarTweetUI(ColaTweets* cola) {
+    char termino[MAX_TWEET];
+    printf("\n--- Buscar Tweet ---\n");
+    printf("Ingrese término de búsqueda (contenido o autor): ");
+    scanf("%s", termino);
+
+    buscarTweetsPorTermino(cola, termino);
+}
+
 Usuario* loginUI(ColaUsuarios* cola) {
     char nombre[MAX_USUARIO];
     char clave[MAX_CLAVE];
@@ -151,6 +161,9 @@ int main() {
                 break;
             case 4:
                 mostrarFeed(&cola_tweets);
+                break;
+            case 8:
+                buscarTweetUI(&cola_tweets);
                 break;
             case 6:
                 if (usuario_logueado != NULL) modificarTweetUI(&cola_tweets, usuario_logueado);

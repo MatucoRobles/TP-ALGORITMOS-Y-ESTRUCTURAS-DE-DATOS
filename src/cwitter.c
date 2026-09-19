@@ -135,3 +135,20 @@ void mostrarFeed(ColaTweets* c) {
         actual = actual->siguiente;
     }
 }
+
+void buscarTweetsPorTermino(ColaTweets* c, const char* termino) {
+    printf("\n--- Resultados de búsqueda: '%s' ---\n", termino);
+    NodoTweet* actual = c->frente;
+    int encontrados = 0;
+    while (actual != NULL) {
+        if (strstr(actual->data.contenido, termino) != NULL || 
+            strcmp(actual->data.autor, termino) == 0) {
+            printf("[%d] @%s: %s\n", actual->data.id, actual->data.autor, actual->data.contenido);
+            encontrados = 1;
+        }
+        actual = actual->siguiente;
+    }
+    if (!encontrados) {
+        printf("No se encontraron tweets que coincidan.\n");
+    }
+}

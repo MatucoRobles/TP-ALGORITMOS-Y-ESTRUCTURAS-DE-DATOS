@@ -59,6 +59,7 @@ int generarSiguienteIdTweet(ColaTweets* c);
 Tweet* buscarTweet(ColaTweets* c, int id, const char* autor);
 int eliminarTweet(ColaTweets* c, int id, const char* autor);
 void mostrarFeed(ColaTweets* c);
-/* Operaciones adicionales: buscar, persistencia */
+void buscarTweetsPorTermino(ColaTweets* c, const char* termino);
+/* Operaciones adicionales: persistencia */
 
 #endif /* CWITTER_H */
