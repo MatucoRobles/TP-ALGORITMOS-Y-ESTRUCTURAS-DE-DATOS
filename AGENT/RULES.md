@@ -35,6 +35,7 @@ Este documento resume las normas de trabajo, desarrollo y entrega basadas en la 
     * Sin accesos a memoria no permitidos.
     * Sin dejar archivos abiertos.
     * Código dividido en funciones, con nombres descriptivos y significativos para variables.
+* **Estructuras de Datos:** No se permite el uso de listas. Se debe utilizar obligatoriamente la estructura de **Cola** para el manejo y almacenamiento dinámico de usuarios y tweets.
 * **Archivos:** No mezclar funciones de archivos de texto con funciones de archivos binarios.
 
 ## 5. Entrega
