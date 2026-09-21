@@ -1,4 +1,5 @@
 #include "include/cwitter.h"
+#include <string.h>
 
 void menuPrincipal(Usuario* logueado) {
     printf("\n--- Menú Cwitter ---\n");
@@ -21,16 +22,30 @@ void menuPrincipal(Usuario* logueado) {
 void registrarUsuarioUI(ColaUsuarios* cola) {
     Usuario nuevo;
     printf("\n--- Registro de Usuario ---\n");
-    printf("Nombre de usuario: ");
-    scanf("%s", nuevo.nombre_usuario);
+    printf("Nombre de usuario (sin espacios): ");
+
+    // " %[^\n]" le dice a scanf que lea todo hasta que el usuario presione Enter,
+    // permitiendo capturar la cadena completa aunque tenga espacios.
+    scanf(" %[^\n]", nuevo.nombre_usuario);
+
+    // strchr busca si hay algún caracter de espacio (' ') dentro del string
+    if (strchr(nuevo.nombre_usuario, ' ') != NULL) {
+        printf("Error: El nombre de usuario no puede contener espacios.\n");
+        return;
+    }
 
     if (buscarUsuario(cola, nuevo.nombre_usuario) != NULL) {
         printf("Error: El nombre de usuario ya existe.\n");
         return;
     }
 
-    printf("Clave: ");
-    scanf("%s", nuevo.clave);
+    printf("Clave (sin espacios): ");
+    scanf(" %[^\n]", nuevo.clave);
+
+    if (strchr(nuevo.clave, ' ') != NULL) {
+        printf("Error: La clave no puede contener espacios.\n");
+        return;
+    }
 
     encolarUsuario(cola, nuevo);
     printf("Usuario registrado exitosamente.\n");
