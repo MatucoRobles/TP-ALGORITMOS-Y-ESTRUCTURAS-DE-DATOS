@@ -1,67 +1,63 @@
-# Bitácora de Diseño - Cwitter (Sprint 1)
+# Bitácora de Diseño - Cwitter (Sprints 1 y 2)
 
-Este documento registra las decisiones arquitectónicas, alternativas consideradas, justificaciones y el uso de Inteligencia Artificial para el desarrollo del primer sprint de Cwitter, bajo la restricción de **no utilizar listas convencionales**.
-
----
-
-## 1. Identificación de Entidades
-
-Para cumplir con los requerimientos del Sprint 1, hemos identificado dos entidades principales independientes pero relacionadas entre sí:
-
-### A. Entidad: Usuario
-Representa a una persona registrada en la plataforma.
-*   `nombre_usuario`: Cadena de caracteres única (ej. máx. 50 caracteres).
-*   `clave`: Cadena de caracteres que almacena la contraseña de ingreso.
-*   `logueado`: Booleano para el estado de sesión.
-
-### B. Entidad: Tweet
-Representa un mensaje público emitido por un usuario.
-*   `id`: Entero único incremental.
-*   `autor`: Referencia al `nombre_usuario`.
-*   `contenido`: Cadena de hasta 140 caracteres.
+Este documento registra las decisiones arquitectónicas, alternativas consideradas, justificaciones y el uso de Inteligencia Artificial para el desarrollo de Cwitter.
 
 ---
 
-## 2. Proyecciones (Operaciones Futuras Probables)
+## SPRINT 1: Fundamentos (Colas)
 
-*   **Sistema de Seguidores:** Uso de colas de prioridad o estructuras de adyacencia para gestionar relaciones.
-*   **Reacciones:** Acumuladores en la estructura de la cola de tweets.
-*   **Feed Personalizado:** Recorrido eficiente de la cola global filtrando por autor.
+### 1. Identificación de Entidades
+Para el Sprint 1 se definieron las entidades `Usuario` (nombre y clave) y `Tweet` (id, autor, contenido).
 
----
-
-## 3. Estructuras de Datos Elegidas y Justificación
-
-Siguiendo la nueva directiva de **prohibición de listas**, hemos seleccionado la estructura de **Cola Dinámica (Queue)** para todas nuestras entidades.
-
-### A. Estructura para Usuarios: Cola Dinámica (FIFO)
-*   **Definición:** Los usuarios se encolan a medida que se registran. La estructura mantiene un puntero al `frente` y uno al `final`.
-*   **Justificación:** El registro de usuarios es un flujo secuencial donde el orden de llegada (registro) es relevante para la gestión de la memoria. Al usar una cola, garantizamos un acceso ordenado y cumplimos con la restricción de no usar listas genéricas.
-
-### B. Estructura para Tweets: Cola Dinámica (FIFO)
-*   **Definición:** Cada nuevo tweet se añade al `final` de la cola global.
-*   **Justificación:** 
-    1.  **Inserción Eficiente:** El encolado es una operación $O(1)$ gracias al puntero al `final`.
-    2.  **Cumplimiento Normativo:** Sustituimos la lista enlazada por una Cola, gestionando los tweets como un flujo de mensajes. Aunque la visualización del feed (de más nuevo a más viejo) requerirá un recorrido específico o una inversión lógica, la estructura base respeta la prohibición de listas del proyecto.
+### 2. Estructuras de Datos y Justificación
+Siguiendo la directiva de **prohibición de listas**, se seleccionó la estructura de **Cola Dinámica (Queue)** para usuarios y tweets.
+*   **Justificación:** Garantiza un acceso ordenado FIFO y cumple con la restricción normativa de no usar listas genéricas.
 
 ---
 
-## 4. Persistencia de la Información
+## SPRINT 2: Procesamiento y Verificación
 
-### Formato de Persistencia Elegido: Archivos de Texto Delimitados (CSV)
-La información se desencola y se guarda en `usuarios.txt` y `tweets.txt` utilizando el delimitador `;`. Al cargar, se reconstruyen las **colas** dinámicas respetando el orden original de los datos.
+En este sprint, evolucionamos la arquitectura para soportar navegación interactiva y servicios externos, incorporando nuevas estructuras de datos permitidas.
+
+### 1. Nuevas Estructuras de Datos y Justificación
+
+#### A. Navegación del Feed: Lista Doblemente Enlazada
+*   **Decisión:** Para el modo de visualización "Historia" (un tweet a la vez), hemos implementado una **Lista Doblemente Enlazada**.
+*   **Justificación:** El requerimiento de "volver al anterior" de forma fluida hace que la Cola (FIFO) del Sprint 1 sea insuficiente. Una lista doble permite punteros `siguiente` y `anterior`, logrando una navegación bidireccional en tiempo constante $O(1)$ entre nodos una vez generada la vista.
+*   **Alternativa descartada:** Uso de dos Pilas. Aunque funcional, la gestión de memoria y el traspaso de elementos entre pilas resulta más costoso y menos intuitivo para una navegación repetitiva.
+
+#### B. Ranking Top 5: Lista Simple Ordenada
+*   **Decisión:** Para el ranking de usuarios verificados, utilizamos una **Lista Enlazada Simple con Inserción Ordenada**.
+*   **Justificación:** Dado que los datos de publicaciones llegan desordenados desde el servicio externo, insertar cada usuario en su posición correcta según su contador de tweets mantiene el ranking actualizado en todo momento. Al finalizar el proceso, solo se toman los primeros 5 nodos.
+
+### 2. Integración con Servicio Externo (FameCheck)
+
+#### A. Verificación y Persistencia
+*   Se añade el campo `es_verificado` a la entidad `Usuario`. 
+*   **Decisión:** La consulta al servicio se realiza durante el login o registro. El estado se persiste en el archivo `usuarios.txt` para evitar consultas innecesarias en cada inicio de sesión, respetando la autoridad del servicio externo.
+
+#### B. Tolerancia a Fallos y Logging
+*   **Estrategia:** "Fail-safe". Si el reporte de un tweet a FameCheck falla, la publicación prosigue para no afectar la experiencia del usuario.
+*   **Implementación de Logs:** Se crea el archivo `service_errors.log` donde se registran los fallos con marca temporal. Se eligió un formato de texto plano (Append) por su simplicidad y bajo costo de escritura.
+
+### 3. Algoritmo de Ordenamiento del Feed
+
+*   **Lógica:** Priorización por tipo de cuenta.
+*   **Algoritmo:** Al generar la vista del feed, se realiza un filtrado en dos pasadas sobre la Cola Global de Tweets:
+    1.  Pasada 1: Extraer tweets de autores con `es_verificado == 1`.
+    2.  Pasada 2: Extraer tweets de autores con `es_verificado == 0`.
+*   Esto garantiza que los verificados aparezcan primero, manteniendo el orden cronológico dentro de cada grupo.
 
 ---
 
-## 5. Registro de Interacciones con la IA
+## Registro de Interacciones con la IA (Sprint 2)
 
-### Interacción Obligatoria 1
-*   **Prompt:** "¿Cómo implementar un sistema de tweets usando únicamente Colas en lugar de listas en C?"
-*   **Resumen:** La IA sugirió definir una estructura `Cola` con punteros `frente` y `final` a nodos de tweets. Explicó que para eliminar elementos intermedios (requerido por el sprint), se debe realizar un recorrido cuidadoso manteniendo la integridad de la cola, o bien "desencolar y volver a encolar" los elementos que no se desean eliminar.
-*   **Decisión final:** Implementar Colas Dinámicas con punteros dobles para gestión eficiente.
+### Interacción 1 (Planificación de Estructuras)
+*   **Prompt:** "¿Cuál es la mejor estructura para un feed que permite ir hacia adelante y atrás?"
+*   **Resumen:** La IA recomendó la Lista Doblemente Enlazada por su capacidad natural de navegación bidireccional.
+*   **Decisión:** Se adoptó esta estructura para el modo interactivo del feed.
 
-### Interacción Obligatoria 2 (Respuesta incorrecta de la IA)
-*   **Prompt:** "Dame una función para eliminar el último elemento de una cola en C."
-*   **Resumen:** La IA proporcionó una función de "pop" estándar que solo eliminaba el frente.
-*   **Problema:** En una cola estándar, solo se accede al frente. Sin embargo, el sprint exige eliminar el último tweet (final).
-*   **Solución:** Implementamos un recorrido desde el frente hasta el penúltimo nodo para actualizar el puntero `final`, asegurando que la estructura de Cola permanezca válida tras la eliminación en cualquier posición.
+### Interacción 2 (Gestión de Errores)
+*   **Prompt:** "¿Cómo registrar errores de red en C sin detener la ejecución principal?"
+*   **Resumen:** La IA sugirió el uso de funciones de logging que escriban en archivos en modo "append" (`a`) y el manejo de códigos de retorno para decidir si mostrar un mensaje al usuario o solo loguear el error de forma silenciosa.
+*   **Decisión:** Implementación de `registrarErrorServicio()` para el archivo de logs.
