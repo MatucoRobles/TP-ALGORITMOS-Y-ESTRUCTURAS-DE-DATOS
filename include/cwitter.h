@@ -65,8 +65,10 @@ void mostrarFeed(ColaTweets* tweets, ColaUsuarios* usuarios);
 void buscarTweetsPorTermino(ColaTweets* c, const char* termino);
 void cargarUsuarios(ColaUsuarios* c);
 void guardarUsuarios(ColaUsuarios* c);
+void liberarColaUsuarios(ColaUsuarios* c);
 void cargarTweets(ColaTweets* c);
 void guardarTweets(ColaTweets* c);
+void liberarColaTweets(ColaTweets* c);
 
 /* --- Funciones de Servicio Externo (FameCheck) y Logs --- */
 int consultarVerificacionFameCheck(const char* nombre_usuario);

@@ -222,6 +222,28 @@ void guardarTweets(ColaTweets* c) {
     fclose(f);
 }
 
+void liberarColaUsuarios(ColaUsuarios* c) {
+    NodoUsuario* actual = c->frente;
+    while (actual != NULL) {
+        NodoUsuario* temp = actual;
+        actual = actual->siguiente;
+        free(temp);
+    }
+    c->frente = NULL;
+    c->final = NULL;
+}
+
+void liberarColaTweets(ColaTweets* c) {
+    NodoTweet* actual = c->frente;
+    while (actual != NULL) {
+        NodoTweet* temp = actual;
+        actual = actual->siguiente;
+        free(temp);
+    }
+    c->frente = NULL;
+    c->final = NULL;
+}
+
 /* --- Implementación: Servicio Externo (FameCheck) y Logs --- */
 
 static int famecheck_disponible = 1;

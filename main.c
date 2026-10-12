@@ -288,7 +288,9 @@ int main() {
         }
     } while (opcion != 0);
 
-    /* TODO: Liberar memoria de las colas antes de salir */
+    /* Liberar memoria de las colas antes de salir */
+    liberarColaUsuarios(&cola_usuarios);
+    liberarColaTweets(&cola_tweets);
 
     return 0;
 }

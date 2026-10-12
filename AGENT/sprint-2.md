@@ -27,7 +27,7 @@ Este archivo detalla los pasos estructurados para el segundo sprint, enfocado en
 * [x] **3.4.** Implementar la lógica del "Top 5" de usuarios verificados (procesamiento y ordenamiento).
 * [x] **3.5.** Refactorizar la visualización del feed para aplicar la prioridad de cuentas verificadas.
 * [x] **3.6.** Implementar el modo de navegación interactiva (uno por vez, adelante y atrás).
-* [ ] **3.7.** Asegurar que la persistencia incluya el estado de "verificado" de los usuarios.
+* [x] **3.7.** Asegurar que la persistencia incluya el estado de "verificado" de los usuarios.
 
 ## Paso 4: Validación y Calidad
 * [ ] **4.1.** Verificar que no existan fugas de memoria (especialmente en la nueva estructura de navegación).
