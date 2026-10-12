@@ -230,7 +230,14 @@ int reportarPublicacionFameCheck(const char* nombre_usuario, int tweet_id) {
 void registrarErrorServicio(const char* mensaje) {
     FILE* f = fopen("service_errors.log", "a");
     if (!f) return;
-    /* En un sistema real usaríamos <time.h> para el timestamp */
-    fprintf(f, "[LOG] %s\n", mensaje);
+    time_t ahora = time(NULL);
+    struct tm* t = localtime(&ahora);
+    char timestamp[32];
+    if (t != NULL) {
+        strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", t);
+        fprintf(f, "[%s] %s\n", timestamp, mensaje);
+    } else {
+        fprintf(f, "[LOG] %s\n", mensaje);
+    }
     fclose(f);
 }

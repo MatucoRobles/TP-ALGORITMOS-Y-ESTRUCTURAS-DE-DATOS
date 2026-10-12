@@ -84,6 +84,16 @@ void publicarTweetUI(ColaTweets* cola, Usuario* usuario) {
 
     encolarTweet(cola, nuevo);
     printf("Tweet publicado con éxito (ID: %d).\n", nuevo.id);
+
+    /* Apartado 3.2: Reporte automático de publicaciones para usuarios verificados */
+    if (usuario->es_verificado) {
+        printf("[FameCheck] Notificando publicación al servicio externo...\n");
+        if (reportarPublicacionFameCheck(usuario->nombre_usuario, nuevo.id)) {
+            printf("[FameCheck] Publicación reportada exitosamente con ID %d.\n", nuevo.id);
+        } else {
+            printf("[FameCheck] Aviso: No se pudo contactar con FameCheck (el fallo fue registrado en los logs).\n");
+        }
+    }
 }
 
 void modificarTweetUI(ColaTweets* cola, Usuario* usuario) {
@@ -173,6 +183,9 @@ int main() {
     ColaTweets cola_tweets;
     Usuario* usuario_logueado = NULL;
     int opcion;
+
+    /* Inicialización de semilla aleatoria */
+    srand((unsigned int)time(NULL));
 
     /* Inicialización de estructuras */
     inicializarColaUsuarios(&cola_usuarios);
