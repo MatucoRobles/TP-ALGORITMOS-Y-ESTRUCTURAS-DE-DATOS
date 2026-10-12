@@ -278,3 +278,84 @@ void mostrarLogsServicio(void) {
     printf("--- Fin de Logs (%d registros encontrados) ---\n", contador);
     fclose(f);
 }
+
+/* --- Implementación: Ranking Top 5 (Lista Simple con Inserción Ordenada) --- */
+
+NodoRanking* insertarOrdenadoRanking(NodoRanking* cabeza, const char* nombre_usuario, int cantidad_tweets) {
+    NodoRanking* nuevo = (NodoRanking*)malloc(sizeof(NodoRanking));
+    if (!nuevo) {
+        perror("Error al asignar memoria para nodo de ranking");
+        return cabeza;
+    }
+    strcpy(nuevo->nombre_usuario, nombre_usuario);
+    nuevo->cantidad_tweets = cantidad_tweets;
+    nuevo->siguiente = NULL;
+
+    /* Si la lista está vacía o el nuevo tiene más tweets que el primero */
+    if (cabeza == NULL || cantidad_tweets > cabeza->cantidad_tweets) {
+        nuevo->siguiente = cabeza;
+        return nuevo;
+    }
+
+    /* Recorrer hasta encontrar la posición adecuada (mantiene orden estable en empate) */
+    NodoRanking* actual = cabeza;
+    while (actual->siguiente != NULL && actual->siguiente->cantidad_tweets >= cantidad_tweets) {
+        actual = actual->siguiente;
+    }
+
+    nuevo->siguiente = actual->siguiente;
+    actual->siguiente = nuevo;
+    return cabeza;
+}
+
+int contarTweetsUsuario(ColaTweets* cola_tweets, const char* nombre_usuario) {
+    int contador = 0;
+    NodoTweet* actual = cola_tweets->frente;
+    while (actual != NULL) {
+        if (strcmp(actual->data.autor, nombre_usuario) == 0) {
+            contador++;
+        }
+        actual = actual->siguiente;
+    }
+    return contador;
+}
+
+void mostrarTop5Verificados(ColaUsuarios* cola_usuarios, ColaTweets* cola_tweets) {
+    NodoRanking* ranking = NULL;
+
+    /* Filtrar usuarios verificados e insertarlos ordenados por cantidad de tweets */
+    NodoUsuario* actual_u = cola_usuarios->frente;
+    while (actual_u != NULL) {
+        if (actual_u->data.es_verificado) {
+            int cant = contarTweetsUsuario(cola_tweets, actual_u->data.nombre_usuario);
+            ranking = insertarOrdenadoRanking(ranking, actual_u->data.nombre_usuario, cant);
+        }
+        actual_u = actual_u->siguiente;
+    }
+
+    if (ranking == NULL) {
+        printf("\nNo hay usuarios verificados registrados para generar el ranking.\n");
+        return;
+    }
+
+    printf("\n--- Top 5 Usuarios Verificados con Mayor Actividad ---\n");
+    NodoRanking* actual_r = ranking;
+    int posicion = 1;
+    while (actual_r != NULL && posicion <= 5) {
+        printf("%d. @%s - %d tweet(s)\n", posicion, actual_r->nombre_usuario, actual_r->cantidad_tweets);
+        actual_r = actual_r->siguiente;
+        posicion++;
+    }
+    printf("------------------------------------------------------\n");
+
+    /* Liberación de memoria de la lista simple ordenada */
+    liberarRanking(ranking);
+}
+
+void liberarRanking(NodoRanking* cabeza) {
+    while (cabeza != NULL) {
+        NodoRanking* temp = cabeza;
+        cabeza = cabeza->siguiente;
+        free(temp);
+    }
+}

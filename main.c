@@ -16,6 +16,7 @@ void menuPrincipal(Usuario* logueado) {
         printf("5. Cerrar Sesión\n");
     }
     printf("9. Gestión de Logs (FameCheck - Paso 3.3)\n");
+    printf("10. Ranking Top 5 Verificados (Paso 3.4)\n");
     printf("0. Salir\n");
     printf("Seleccione una opción: ");
 }
@@ -269,6 +270,9 @@ int main() {
                 break;
             case 9:
                 menuLogsServicioUI();
+                break;
+            case 10:
+                mostrarTop5Verificados(&cola_usuarios, &cola_tweets);
                 break;
             case 0:
                 guardarUsuarios(&cola_usuarios);

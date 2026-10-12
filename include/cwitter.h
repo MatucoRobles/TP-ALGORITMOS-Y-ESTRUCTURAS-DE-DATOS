@@ -75,4 +75,16 @@ void mostrarLogsServicio(void);
 void configurarDisponibilidadFameCheck(int disponible);
 int obtenerDisponibilidadFameCheck(void);
 
+/* --- Entidad y Funciones: Ranking Top 5 (Lista Simple Ordenada) --- */
+typedef struct NodoRanking {
+    char nombre_usuario[MAX_USUARIO];
+    int cantidad_tweets;
+    struct NodoRanking* siguiente;
+} NodoRanking;
+
+NodoRanking* insertarOrdenadoRanking(NodoRanking* cabeza, const char* nombre_usuario, int cantidad_tweets);
+int contarTweetsUsuario(ColaTweets* cola_tweets, const char* nombre_usuario);
+void mostrarTop5Verificados(ColaUsuarios* cola_usuarios, ColaTweets* cola_tweets);
+void liberarRanking(NodoRanking* cabeza);
+
 #endif /* CWITTER_H */
