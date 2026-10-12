@@ -7,14 +7,17 @@ void menuPrincipal(Usuario* logueado) {
         printf("1. Registrarse\n");
         printf("2. Iniciar Sesión\n");
     } else {
-        printf("Usuario actual: @%s\n", logueado->nombre_usuario);
+        printf("Usuario actual: @%s%s\n", logueado->nombre_usuario, logueado->es_verificado ? " [Verificado]" : "");
         printf("3. Publicar Tweet (Paso 3.4)\n");
-        printf("4. Ver Feed (Paso 3.7)\n");
+        printf("4. Ver Feed (Prioridad Verificados - Paso 3.5)\n");
         printf("8. Buscar Tweet\n");
         printf("6. Modificar Tweet\n");
         printf("7. Eliminar Tweet\n");
         printf("5. Cerrar Sesión\n");
     }
+    printf("9. Gestión de Logs (FameCheck - Paso 3.3)\n");
+    printf("10. Ranking Top 5 Verificados (Paso 3.4)\n");
+    printf("11. Modo Historia / Navegación Interactiva (Paso 3.6)\n");
     printf("0. Salir\n");
     printf("Seleccione una opción: ");
 }
@@ -47,6 +50,15 @@ void registrarUsuarioUI(ColaUsuarios* cola) {
         return;
     }
 
+    /* Consulta al servicio externo FameCheck (Apartado 3.1) */
+    printf("Consultando verificacion en servicio externo FameCheck...\n");
+    nuevo.es_verificado = consultarVerificacionFameCheck(nuevo.nombre_usuario);
+    if (nuevo.es_verificado) {
+        printf("[FameCheck] Usuario reconocido como figura publica. Cuenta VERIFICADA.\n");
+    } else {
+        printf("[FameCheck] Usuario estandar. Cuenta NO VERIFICADA.\n");
+    }
+
     encolarUsuario(cola, nuevo);
     printf("Usuario registrado exitosamente.\n");
 }
@@ -75,6 +87,16 @@ void publicarTweetUI(ColaTweets* cola, Usuario* usuario) {
 
     encolarTweet(cola, nuevo);
     printf("Tweet publicado con éxito (ID: %d).\n", nuevo.id);
+
+    /* Apartado 3.2: Reporte automático de publicaciones para usuarios verificados */
+    if (usuario->es_verificado) {
+        printf("[FameCheck] Notificando publicación al servicio externo...\n");
+        if (reportarPublicacionFameCheck(usuario->nombre_usuario, nuevo.id)) {
+            printf("[FameCheck] Publicación reportada exitosamente con ID %d.\n", nuevo.id);
+        } else {
+            printf("[FameCheck] Aviso: No se pudo contactar con FameCheck (el fallo fue registrado en los logs).\n");
+        }
+    }
 }
 
 void modificarTweetUI(ColaTweets* cola, Usuario* usuario) {
@@ -139,11 +161,42 @@ Usuario* loginUI(ColaUsuarios* cola) {
 
     Usuario* u = autenticarUsuario(cola, nombre, clave);
     if (u != NULL) {
-        printf("Bienvenido @%s!\n", u->nombre_usuario);
+        /* Consulta/actualizacion en FameCheck si aun no estaba verificado (Apartado 3.1) */
+        if (!u->es_verificado) {
+            if (consultarVerificacionFameCheck(u->nombre_usuario)) {
+                u->es_verificado = 1;
+                printf("[FameCheck] Su cuenta ha sido reconocida como VERIFICADA.\n");
+            }
+        }
+
+        if (u->es_verificado) {
+            printf("Bienvenido @%s! [Cuenta Verificada]\n", u->nombre_usuario);
+        } else {
+            printf("Bienvenido @%s!\n", u->nombre_usuario);
+        }
         return u;
     } else {
         printf("Error: Usuario o clave incorrectos.\n");
         return NULL;
+    }
+}
+
+void menuLogsServicioUI(void) {
+    int subopcion;
+    printf("\n--- Gestión de Logs y Estado de FameCheck (Paso 3.3) ---\n");
+    printf("Estado del servicio externo: %s\n", obtenerDisponibilidadFameCheck() ? "ONLINE (Operativo)" : "OFFLINE (Caído / Simulación de error)");
+    printf("1. Ver registro de errores (service_errors.log)\n");
+    printf("2. Alternar disponibilidad de FameCheck (ONLINE / OFFLINE)\n");
+    printf("0. Volver al menú principal\n");
+    printf("Seleccione una opción: ");
+    if (scanf("%d", &subopcion) != 1) return;
+
+    if (subopcion == 1) {
+        mostrarLogsServicio();
+    } else if (subopcion == 2) {
+        int nuevo_estado = !obtenerDisponibilidadFameCheck();
+        configurarDisponibilidadFameCheck(nuevo_estado);
+        printf("\n[FameCheck] Estado del servicio actualizado a: %s\n", nuevo_estado ? "ONLINE (Operativo)" : "OFFLINE (Caído / Simulación de error)");
     }
 }
 
@@ -152,6 +205,9 @@ int main() {
     ColaTweets cola_tweets;
     Usuario* usuario_logueado = NULL;
     int opcion;
+
+    /* Inicialización de semilla aleatoria */
+    srand((unsigned int)time(NULL));
 
     /* Inicialización de estructuras */
     inicializarColaUsuarios(&cola_usuarios);
@@ -165,11 +221,19 @@ int main() {
 
         switch (opcion) {
             case 1:
-                if (usuario_logueado == NULL) registrarUsuarioUI(&cola_usuarios);
+                if (usuario_logueado == NULL) {
+                    registrarUsuarioUI(&cola_usuarios);
+                    guardarUsuarios(&cola_usuarios);
+                }
                 else printf("Ya tienes una sesión iniciada.\n");
                 break;
             case 2:
-                if (usuario_logueado == NULL) usuario_logueado = loginUI(&cola_usuarios);
+                if (usuario_logueado == NULL) {
+                    usuario_logueado = loginUI(&cola_usuarios);
+                    if (usuario_logueado != NULL) {
+                        guardarUsuarios(&cola_usuarios);
+                    }
+                }
                 else printf("Ya tienes una sesión iniciada.\n");
                 break;
             case 3:
@@ -180,7 +244,7 @@ int main() {
                 else printf("Debes iniciar sesión para publicar.\n");
                 break;
             case 4:
-                mostrarFeed(&cola_tweets);
+                mostrarFeed(&cola_tweets, &cola_usuarios);
                 break;
             case 8:
                 buscarTweetUI(&cola_tweets);
@@ -205,6 +269,15 @@ int main() {
                     usuario_logueado = NULL;
                 } else printf("No hay sesión activa.\n");
                 break;
+            case 9:
+                menuLogsServicioUI();
+                break;
+            case 10:
+                mostrarTop5Verificados(&cola_usuarios, &cola_tweets);
+                break;
+            case 11:
+                navegarFeedInteractivo(&cola_tweets, &cola_usuarios);
+                break;
             case 0:
                 guardarUsuarios(&cola_usuarios);
                 guardarTweets(&cola_tweets);
@@ -215,7 +288,9 @@ int main() {
         }
     } while (opcion != 0);
 
-    /* TODO: Liberar memoria de las colas antes de salir */
+    /* Liberar memoria de las colas antes de salir */
+    liberarColaUsuarios(&cola_usuarios);
+    liberarColaTweets(&cola_tweets);
 
     return 0;
 }
