@@ -40,7 +40,7 @@ Estos casos deben completarse al finalizar el desarrollo del Sprint 2.
 |:---|:---|:---|:---|:---|
 | **CP-15** | Top 5 con < 5 usuarios | Pedir ranking con solo 3 usuarios verificados registrados. | Muestra el ranking con 3 usuarios correctamente ordenados. | EXITOSO |
 | **CP-16** | Top 5 con empate | Dos usuarios con misma cantidad de tweets. | Ambos aparecen en el ranking según orden de procesamiento. | EXITOSO |
-| **CP-17** | Orden prioritario Feed | Feed con mezcla de tweets (Verificados y Normales). | Los de verificados aparecen al inicio, luego los normales. | (Pendiente) |
+| **CP-17** | Orden prioritario Feed | Feed con mezcla de tweets (Verificados y Normales). | Los de verificados aparecen al inicio, luego los normales. | EXITOSO |
 
 ### 3. Navegación Interactiva (Modo Historia)
 

@@ -47,6 +47,11 @@ Usuario* autenticarUsuario(ColaUsuarios* c, const char* nombre, const char* clav
     return NULL;
 }
 
+int esUsuarioVerificado(ColaUsuarios* c, const char* nombre) {
+    Usuario* u = buscarUsuario(c, nombre);
+    return (u != NULL && u->es_verificado == 1);
+}
+
 /* --- Implementación: Cola de Tweets --- */
 
 void inicializarColaTweets(ColaTweets* c) {
@@ -122,18 +127,33 @@ int eliminarTweet(ColaTweets* c, int id, const char* autor) {
     return 0;
 }
 
-void mostrarFeed(ColaTweets* c) {
-    if (estaVaciaTweets(c)) {
+void mostrarFeed(ColaTweets* tweets, ColaUsuarios* usuarios) {
+    if (estaVaciaTweets(tweets)) {
         printf("\nEl feed está vacío.\n");
         return;
     }
 
-    printf("\n--- Feed Global ---\n");
-    NodoTweet* actual = c->frente;
+    printf("\n--- Feed Global (Prioridad: Verificados) ---\n");
+
+    /* Algoritmo de dos pasadas (Sprint 2 - Paso 3.5) */
+    /* Pasada 1: Tweets de autores verificados */
+    NodoTweet* actual = tweets->frente;
     while (actual != NULL) {
-        printf("[%d] @%s: %s\n", actual->data.id, actual->data.autor, actual->data.contenido);
+        if (esUsuarioVerificado(usuarios, actual->data.autor)) {
+            printf("[%d] @%s [✓]: %s\n", actual->data.id, actual->data.autor, actual->data.contenido);
+        }
         actual = actual->siguiente;
     }
+
+    /* Pasada 2: Tweets de autores no verificados */
+    actual = tweets->frente;
+    while (actual != NULL) {
+        if (!esUsuarioVerificado(usuarios, actual->data.autor)) {
+            printf("[%d] @%s: %s\n", actual->data.id, actual->data.autor, actual->data.contenido);
+        }
+        actual = actual->siguiente;
+    }
+    printf("-------------------------------------------\n");
 }
 
 void buscarTweetsPorTermino(ColaTweets* c, const char* termino) {

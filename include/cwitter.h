@@ -51,6 +51,7 @@ int estaVaciaUsuarios(ColaUsuarios* c);
 void encolarUsuario(ColaUsuarios* c, Usuario u);
 Usuario* buscarUsuario(ColaUsuarios* c, const char* nombre);
 Usuario* autenticarUsuario(ColaUsuarios* c, const char* nombre, const char* clave);
+int esUsuarioVerificado(ColaUsuarios* c, const char* nombre);
 /* Operaciones adicionales: persistencia */
 
 /* --- Funciones de Gestión de Tweets (Cola) --- */
@@ -60,7 +61,7 @@ void encolarTweet(ColaTweets* c, Tweet t);
 int generarSiguienteIdTweet(ColaTweets* c);
 Tweet* buscarTweet(ColaTweets* c, int id, const char* autor);
 int eliminarTweet(ColaTweets* c, int id, const char* autor);
-void mostrarFeed(ColaTweets* c);
+void mostrarFeed(ColaTweets* tweets, ColaUsuarios* usuarios);
 void buscarTweetsPorTermino(ColaTweets* c, const char* termino);
 void cargarUsuarios(ColaUsuarios* c);
 void guardarUsuarios(ColaUsuarios* c);

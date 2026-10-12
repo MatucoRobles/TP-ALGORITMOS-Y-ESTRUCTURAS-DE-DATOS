@@ -9,7 +9,7 @@ void menuPrincipal(Usuario* logueado) {
     } else {
         printf("Usuario actual: @%s%s\n", logueado->nombre_usuario, logueado->es_verificado ? " [Verificado]" : "");
         printf("3. Publicar Tweet (Paso 3.4)\n");
-        printf("4. Ver Feed (Paso 3.7)\n");
+        printf("4. Ver Feed (Prioridad Verificados - Paso 3.5)\n");
         printf("8. Buscar Tweet\n");
         printf("6. Modificar Tweet\n");
         printf("7. Eliminar Tweet\n");
@@ -243,7 +243,7 @@ int main() {
                 else printf("Debes iniciar sesión para publicar.\n");
                 break;
             case 4:
-                mostrarFeed(&cola_tweets);
+                mostrarFeed(&cola_tweets, &cola_usuarios);
                 break;
             case 8:
                 buscarTweetUI(&cola_tweets);
