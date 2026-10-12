@@ -67,9 +67,12 @@ void guardarUsuarios(ColaUsuarios* c);
 void cargarTweets(ColaTweets* c);
 void guardarTweets(ColaTweets* c);
 
-/* --- Funciones de Servicio Externo (FameCheck) --- */
+/* --- Funciones de Servicio Externo (FameCheck) y Logs --- */
 int consultarVerificacionFameCheck(const char* nombre_usuario);
 int reportarPublicacionFameCheck(const char* nombre_usuario, int tweet_id);
 void registrarErrorServicio(const char* mensaje);
+void mostrarLogsServicio(void);
+void configurarDisponibilidadFameCheck(int disponible);
+int obtenerDisponibilidadFameCheck(void);
 
 #endif /* CWITTER_H */

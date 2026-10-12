@@ -202,9 +202,26 @@ void guardarTweets(ColaTweets* c) {
     fclose(f);
 }
 
-/* --- Implementación: Servicio Externo (FameCheck) --- */
+/* --- Implementación: Servicio Externo (FameCheck) y Logs --- */
+
+static int famecheck_disponible = 1;
+
+void configurarDisponibilidadFameCheck(int disponible) {
+    famecheck_disponible = disponible;
+}
+
+int obtenerDisponibilidadFameCheck(void) {
+    return famecheck_disponible;
+}
 
 int consultarVerificacionFameCheck(const char* nombre_usuario) {
+    if (!famecheck_disponible) {
+        char msg[200];
+        sprintf(msg, "ERROR: Fallo al consultar verificacion de @%s - Servicio FameCheck no disponible", nombre_usuario);
+        registrarErrorServicio(msg);
+        return 0;
+    }
+
     /* Simulación: Algunos nombres son VIP por defecto */
     const char* vips[] = {"messi", "elonmusk", "billgates", "maradona", "ladygaga"};
     int i;
@@ -217,10 +234,10 @@ int consultarVerificacionFameCheck(const char* nombre_usuario) {
 }
 
 int reportarPublicacionFameCheck(const char* nombre_usuario, int tweet_id) {
-    /* Simulación de fallo aleatorio (10% de probabilidad de error) */
-    if (rand() % 10 == 0) {
+    /* Fallo si el servicio está caído o por fallo aleatorio (10% de probabilidad) */
+    if (!famecheck_disponible || (rand() % 10 == 0)) {
         char msg[200];
-        sprintf(msg, "ERROR: No se pudo reportar publicación de @%s (Tweet ID: %d)", nombre_usuario, tweet_id);
+        sprintf(msg, "ERROR: No se pudo reportar publicacion de @%s (Tweet ID: %d) - Servicio FameCheck no disponible", nombre_usuario, tweet_id);
         registrarErrorServicio(msg);
         return 0; /* Fallo */
     }
@@ -239,5 +256,25 @@ void registrarErrorServicio(const char* mensaje) {
     } else {
         fprintf(f, "[LOG] %s\n", mensaje);
     }
+    fclose(f);
+}
+
+void mostrarLogsServicio(void) {
+    FILE* f = fopen("service_errors.log", "r");
+    if (!f) {
+        printf("\nNo hay errores registrados en service_errors.log (el archivo no existe o esta vacio).\n");
+        return;
+    }
+    printf("\n--- Registro de Errores del Servicio (service_errors.log) ---\n");
+    char linea[300];
+    int contador = 0;
+    while (fgets(linea, sizeof(linea), f) != NULL) {
+        printf("%s", linea);
+        contador++;
+    }
+    if (contador == 0) {
+        printf("El archivo de logs esta vacio.\n");
+    }
+    printf("--- Fin de Logs (%d registros encontrados) ---\n", contador);
     fclose(f);
 }

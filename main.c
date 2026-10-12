@@ -15,6 +15,7 @@ void menuPrincipal(Usuario* logueado) {
         printf("7. Eliminar Tweet\n");
         printf("5. Cerrar Sesión\n");
     }
+    printf("9. Gestión de Logs (FameCheck - Paso 3.3)\n");
     printf("0. Salir\n");
     printf("Seleccione una opción: ");
 }
@@ -178,6 +179,25 @@ Usuario* loginUI(ColaUsuarios* cola) {
     }
 }
 
+void menuLogsServicioUI(void) {
+    int subopcion;
+    printf("\n--- Gestión de Logs y Estado de FameCheck (Paso 3.3) ---\n");
+    printf("Estado del servicio externo: %s\n", obtenerDisponibilidadFameCheck() ? "ONLINE (Operativo)" : "OFFLINE (Caído / Simulación de error)");
+    printf("1. Ver registro de errores (service_errors.log)\n");
+    printf("2. Alternar disponibilidad de FameCheck (ONLINE / OFFLINE)\n");
+    printf("0. Volver al menú principal\n");
+    printf("Seleccione una opción: ");
+    if (scanf("%d", &subopcion) != 1) return;
+
+    if (subopcion == 1) {
+        mostrarLogsServicio();
+    } else if (subopcion == 2) {
+        int nuevo_estado = !obtenerDisponibilidadFameCheck();
+        configurarDisponibilidadFameCheck(nuevo_estado);
+        printf("\n[FameCheck] Estado del servicio actualizado a: %s\n", nuevo_estado ? "ONLINE (Operativo)" : "OFFLINE (Caído / Simulación de error)");
+    }
+}
+
 int main() {
     ColaUsuarios cola_usuarios;
     ColaTweets cola_tweets;
@@ -246,6 +266,9 @@ int main() {
                     printf("Sesión cerrada para @%s.\n", usuario_logueado->nombre_usuario);
                     usuario_logueado = NULL;
                 } else printf("No hay sesión activa.\n");
+                break;
+            case 9:
+                menuLogsServicioUI();
                 break;
             case 0:
                 guardarUsuarios(&cola_usuarios);
