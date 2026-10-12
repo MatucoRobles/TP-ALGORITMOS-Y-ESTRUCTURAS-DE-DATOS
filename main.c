@@ -7,7 +7,7 @@ void menuPrincipal(Usuario* logueado) {
         printf("1. Registrarse\n");
         printf("2. Iniciar Sesión\n");
     } else {
-        printf("Usuario actual: @%s\n", logueado->nombre_usuario);
+        printf("Usuario actual: @%s%s\n", logueado->nombre_usuario, logueado->es_verificado ? " [Verificado]" : "");
         printf("3. Publicar Tweet (Paso 3.4)\n");
         printf("4. Ver Feed (Paso 3.7)\n");
         printf("8. Buscar Tweet\n");
@@ -45,6 +45,15 @@ void registrarUsuarioUI(ColaUsuarios* cola) {
     if (strchr(nuevo.clave, ' ') != NULL) {
         printf("Error: La clave no puede contener espacios.\n");
         return;
+    }
+
+    /* Consulta al servicio externo FameCheck (Apartado 3.1) */
+    printf("Consultando verificacion en servicio externo FameCheck...\n");
+    nuevo.es_verificado = consultarVerificacionFameCheck(nuevo.nombre_usuario);
+    if (nuevo.es_verificado) {
+        printf("[FameCheck] Usuario reconocido como figura publica. Cuenta VERIFICADA.\n");
+    } else {
+        printf("[FameCheck] Usuario estandar. Cuenta NO VERIFICADA.\n");
     }
 
     encolarUsuario(cola, nuevo);
@@ -139,7 +148,19 @@ Usuario* loginUI(ColaUsuarios* cola) {
 
     Usuario* u = autenticarUsuario(cola, nombre, clave);
     if (u != NULL) {
-        printf("Bienvenido @%s!\n", u->nombre_usuario);
+        /* Consulta/actualizacion en FameCheck si aun no estaba verificado (Apartado 3.1) */
+        if (!u->es_verificado) {
+            if (consultarVerificacionFameCheck(u->nombre_usuario)) {
+                u->es_verificado = 1;
+                printf("[FameCheck] Su cuenta ha sido reconocida como VERIFICADA.\n");
+            }
+        }
+
+        if (u->es_verificado) {
+            printf("Bienvenido @%s! [Cuenta Verificada]\n", u->nombre_usuario);
+        } else {
+            printf("Bienvenido @%s!\n", u->nombre_usuario);
+        }
         return u;
     } else {
         printf("Error: Usuario o clave incorrectos.\n");
@@ -165,11 +186,19 @@ int main() {
 
         switch (opcion) {
             case 1:
-                if (usuario_logueado == NULL) registrarUsuarioUI(&cola_usuarios);
+                if (usuario_logueado == NULL) {
+                    registrarUsuarioUI(&cola_usuarios);
+                    guardarUsuarios(&cola_usuarios);
+                }
                 else printf("Ya tienes una sesión iniciada.\n");
                 break;
             case 2:
-                if (usuario_logueado == NULL) usuario_logueado = loginUI(&cola_usuarios);
+                if (usuario_logueado == NULL) {
+                    usuario_logueado = loginUI(&cola_usuarios);
+                    if (usuario_logueado != NULL) {
+                        guardarUsuarios(&cola_usuarios);
+                    }
+                }
                 else printf("Ya tienes una sesión iniciada.\n");
                 break;
             case 3:

@@ -29,9 +29,9 @@ Estos casos deben completarse al finalizar el desarrollo del Sprint 2.
 
 | ID | Situación a probar | Operación realizada | Resultado esperado | Salida obtenida |
 |:---|:---|:---|:---|:---|
-| **CP-11** | Verificación exitosa | Registrar/Loguear un usuario "famoso". | El sistema marca al usuario como "Verificado". | (Pendiente) |
-| **CP-12** | Verificación fallida | Registrar un usuario común. | El sistema marca al usuario como "No Verificado". | (Pendiente) |
-| **CP-13** | Persistencia de verificación | Reiniciar tras verificar un usuario. | El estado de verificado se mantiene sin re-consultar al servicio. | (Pendiente) |
+| **CP-11** | Verificación exitosa | Registrar/Loguear un usuario "famoso". | El sistema marca al usuario como "Verificado". | EXITOSO |
+| **CP-12** | Verificación fallida | Registrar un usuario común. | El sistema marca al usuario como "No Verificado". | EXITOSO |
+| **CP-13** | Persistencia de verificación | Reiniciar tras verificar un usuario. | El estado de verificado se mantiene sin re-consultar al servicio. | EXITOSO |
 | **CP-14** | Fallo de conexión (Log) | Publicar como verificado con el servicio simulando caída. | Tweet se publica y aparece error en `service_errors.log`. | (Pendiente) |
 
 ### 2. Procesamiento de Datos (Ranking y Feed)

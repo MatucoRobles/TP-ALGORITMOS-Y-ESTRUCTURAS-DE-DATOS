@@ -156,9 +156,16 @@ void buscarTweetsPorTermino(ColaTweets* c, const char* termino) {
 void cargarUsuarios(ColaUsuarios* c) {
     FILE* f = fopen("usuarios.txt", "r");
     if (!f) return;
+    char linea[MAX_USUARIO + MAX_CLAVE + 20];
     Usuario u;
-    while (fscanf(f, "%[^;];%s\n", u.nombre_usuario, u.clave) == 2) {
-        encolarUsuario(c, u);
+    while (fgets(linea, sizeof(linea), f) != NULL) {
+        linea[strcspn(linea, "\r\n")] = '\0';
+        if (strlen(linea) == 0) continue;
+        u.es_verificado = 0;
+        int campos = sscanf(linea, "%[^;];%[^;];%d", u.nombre_usuario, u.clave, &u.es_verificado);
+        if (campos >= 2) {
+            encolarUsuario(c, u);
+        }
     }
     fclose(f);
 }
@@ -168,7 +175,7 @@ void guardarUsuarios(ColaUsuarios* c) {
     if (!f) return;
     NodoUsuario* actual = c->frente;
     while (actual != NULL) {
-        fprintf(f, "%s;%s\n", actual->data.nombre_usuario, actual->data.clave);
+        fprintf(f, "%s;%s;%d\n", actual->data.nombre_usuario, actual->data.clave, actual->data.es_verificado);
         actual = actual->siguiente;
     }
     fclose(f);
@@ -192,5 +199,38 @@ void guardarTweets(ColaTweets* c) {
         fprintf(f, "%d;%s;%s\n", actual->data.id, actual->data.autor, actual->data.contenido);
         actual = actual->siguiente;
     }
+    fclose(f);
+}
+
+/* --- Implementación: Servicio Externo (FameCheck) --- */
+
+int consultarVerificacionFameCheck(const char* nombre_usuario) {
+    /* Simulación: Algunos nombres son VIP por defecto */
+    const char* vips[] = {"messi", "elonmusk", "billgates", "maradona", "ladygaga"};
+    int i;
+    for (i = 0; i < 5; i++) {
+        if (strcmp(nombre_usuario, vips[i]) == 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int reportarPublicacionFameCheck(const char* nombre_usuario, int tweet_id) {
+    /* Simulación de fallo aleatorio (10% de probabilidad de error) */
+    if (rand() % 10 == 0) {
+        char msg[200];
+        sprintf(msg, "ERROR: No se pudo reportar publicación de @%s (Tweet ID: %d)", nombre_usuario, tweet_id);
+        registrarErrorServicio(msg);
+        return 0; /* Fallo */
+    }
+    return 1; /* Éxito */
+}
+
+void registrarErrorServicio(const char* mensaje) {
+    FILE* f = fopen("service_errors.log", "a");
+    if (!f) return;
+    /* En un sistema real usaríamos <time.h> para el timestamp */
+    fprintf(f, "[LOG] %s\n", mensaje);
     fclose(f);
 }

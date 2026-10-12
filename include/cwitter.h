@@ -14,6 +14,7 @@
 typedef struct {
     char nombre_usuario[MAX_USUARIO];
     char clave[MAX_CLAVE];
+    int es_verificado; /* 0: No, 1: Sí */
 } Usuario;
 
 typedef struct NodoUsuario {
@@ -64,6 +65,10 @@ void cargarUsuarios(ColaUsuarios* c);
 void guardarUsuarios(ColaUsuarios* c);
 void cargarTweets(ColaTweets* c);
 void guardarTweets(ColaTweets* c);
-/* Operaciones adicionales: persistencia */
+
+/* --- Funciones de Servicio Externo (FameCheck) --- */
+int consultarVerificacionFameCheck(const char* nombre_usuario);
+int reportarPublicacionFameCheck(const char* nombre_usuario, int tweet_id);
+void registrarErrorServicio(const char* mensaje);
 
 #endif /* CWITTER_H */

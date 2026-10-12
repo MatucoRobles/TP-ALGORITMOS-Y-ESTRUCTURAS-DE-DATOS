@@ -21,7 +21,7 @@ Este archivo detalla los pasos estructurados para el segundo sprint, enfocado en
 * [ ] **2.9.** Diseñar 2 casos de prueba adicionales propios.
 
 ## Paso 3: Desarrollo y Funcionalidades
-* [ ] **3.1.** Implementar la consulta al servicio externo `FameCheck` durante el registro/login.
+* [x] **3.1.** Implementar la consulta al servicio externo `FameCheck` durante el registro/login.
 * [ ] **3.2.** Implementar el reporte automático de publicaciones para usuarios verificados.
 * [ ] **3.3.** Crear el sistema de Logs para fallos del servicio externo.
 * [ ] **3.4.** Implementar la lógica del "Top 5" de usuarios verificados (procesamiento y ordenamiento).
