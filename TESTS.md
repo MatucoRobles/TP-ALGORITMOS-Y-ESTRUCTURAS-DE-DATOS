@@ -46,9 +46,9 @@ Estos casos deben completarse al finalizar el desarrollo del Sprint 2.
 
 | ID | Situación a probar | Operación realizada | Resultado esperado | Salida obtenida |
 |:---|:---|:---|:---|:---|
-| **CP-18** | Navegación Adelante | Avanzar de a un tweet en el feed. | Se muestra el siguiente tweet correctamente. | (Pendiente) |
-| **CP-19** | Navegación Atrás | Retroceder tras haber avanzado. | Se muestra el tweet anterior sin recargar todo el feed. | (Pendiente) |
-| **CP-20** | Límites del Feed | Intentar ir atrás en el 1er tweet o adelante en el último. | El sistema avisa que no hay más elementos en esa dirección. | (Pendiente) |
+| **CP-18** | Navegación Adelante | Avanzar de a un tweet en el feed. | Se muestra el siguiente tweet correctamente. | EXITOSO |
+| **CP-19** | Navegación Atrás | Retroceder tras haber avanzado. | Se muestra el tweet anterior sin recargar todo el feed. | EXITOSO |
+| **CP-20** | Límites del Feed | Intentar ir atrás en el 1er tweet o adelante en el último. | El sistema avisa que no hay más elementos en esa dirección. | EXITOSO |
 
 ---
 
@@ -56,8 +56,8 @@ Estos casos deben completarse al finalizar el desarrollo del Sprint 2.
 
 | ID | Situación a probar | Operación realizada | Resultado esperado | Salida obtenida |
 |:---|:---|:---|:---|:---|
-| **CP-21** | Reinicio durante navegación | Iniciar modo historia y cerrar el programa. | Al volver, el sistema debe permitir iniciar la navegación desde el principio sin errores. | (Pendiente) |
-| **CP-22** | Tweet vacío en navegación | Navegar por un feed donde hay tweets con contenido mínimo. | El sistema visualiza correctamente incluso tweets muy cortos o solo espacios. | (Pendiente) |
+| **CP-21** | Reinicio durante navegación | Iniciar modo historia y cerrar el programa. | Al volver, el sistema debe permitir iniciar la navegación desde el principio sin errores. | EXITOSO |
+| **CP-22** | Tweet vacío en navegación | Navegar por un feed donde hay tweets con contenido mínimo. | El sistema visualiza correctamente incluso tweets muy cortos o solo espacios. | EXITOSO |
 
 ---
 

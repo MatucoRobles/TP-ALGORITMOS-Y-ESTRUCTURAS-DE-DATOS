@@ -17,6 +17,7 @@ void menuPrincipal(Usuario* logueado) {
     }
     printf("9. Gestión de Logs (FameCheck - Paso 3.3)\n");
     printf("10. Ranking Top 5 Verificados (Paso 3.4)\n");
+    printf("11. Modo Historia / Navegación Interactiva (Paso 3.6)\n");
     printf("0. Salir\n");
     printf("Seleccione una opción: ");
 }
@@ -273,6 +274,9 @@ int main() {
                 break;
             case 10:
                 mostrarTop5Verificados(&cola_usuarios, &cola_tweets);
+                break;
+            case 11:
+                navegarFeedInteractivo(&cola_tweets, &cola_usuarios);
                 break;
             case 0:
                 guardarUsuarios(&cola_usuarios);

@@ -379,3 +379,131 @@ void liberarRanking(NodoRanking* cabeza) {
         free(temp);
     }
 }
+
+/* --- Implementación: Feed Interactivo / Modo Historia (Lista Doblemente Enlazada) --- */
+
+void inicializarListaDoble(ListaDobleFeed* lista) {
+    lista->cabeza = NULL;
+    lista->cola = NULL;
+    lista->cantidad = 0;
+}
+
+void agregarTweetListaDoble(ListaDobleFeed* lista, Tweet t, int es_verificado) {
+    NodoTweetDoble* nuevo = (NodoTweetDoble*)malloc(sizeof(NodoTweetDoble));
+    if (!nuevo) {
+        perror("Error al asignar memoria para nodo doble");
+        return;
+    }
+    nuevo->data = t;
+    nuevo->autor_es_verificado = es_verificado;
+    nuevo->siguiente = NULL;
+    nuevo->anterior = lista->cola;
+
+    if (lista->cabeza == NULL) {
+        lista->cabeza = nuevo;
+    } else {
+        lista->cola->siguiente = nuevo;
+    }
+    lista->cola = nuevo;
+    lista->cantidad++;
+}
+
+ListaDobleFeed* crearFeedInteractivo(ColaTweets* cola_tweets, ColaUsuarios* cola_usuarios) {
+    ListaDobleFeed* lista = (ListaDobleFeed*)malloc(sizeof(ListaDobleFeed));
+    if (!lista) return NULL;
+    inicializarListaDoble(lista);
+
+    /* Pasada 1: Tweets de autores verificados (prioridad) */
+    NodoTweet* actual = cola_tweets->frente;
+    while (actual != NULL) {
+        if (esUsuarioVerificado(cola_usuarios, actual->data.autor)) {
+            agregarTweetListaDoble(lista, actual->data, 1);
+        }
+        actual = actual->siguiente;
+    }
+
+    /* Pasada 2: Tweets de autores no verificados */
+    actual = cola_tweets->frente;
+    while (actual != NULL) {
+        if (!esUsuarioVerificado(cola_usuarios, actual->data.autor)) {
+            agregarTweetListaDoble(lista, actual->data, 0);
+        }
+        actual = actual->siguiente;
+    }
+
+    return lista;
+}
+
+void liberarFeedInteractivo(ListaDobleFeed* lista) {
+    if (!lista) return;
+    NodoTweetDoble* actual = lista->cabeza;
+    while (actual != NULL) {
+        NodoTweetDoble* temp = actual;
+        actual = actual->siguiente;
+        free(temp);
+    }
+    lista->cabeza = NULL;
+    lista->cola = NULL;
+    lista->cantidad = 0;
+}
+
+void navegarFeedInteractivo(ColaTweets* cola_tweets, ColaUsuarios* cola_usuarios) {
+    if (estaVaciaTweets(cola_tweets)) {
+        printf("\nEl feed está vacío. No hay publicaciones para navegar en Modo Historia.\n");
+        return;
+    }
+
+    ListaDobleFeed* feed = crearFeedInteractivo(cola_tweets, cola_usuarios);
+    if (!feed || feed->cantidad == 0) {
+        printf("\nNo hay tweets disponibles para navegar.\n");
+        if (feed) {
+            liberarFeedInteractivo(feed);
+            free(feed);
+        }
+        return;
+    }
+
+    NodoTweetDoble* actual = feed->cabeza;
+    int indice = 1;
+    char comando;
+
+    printf("\n=== Modo Historia: Navegación Interactiva (Lista Doblemente Enlazada) ===\n");
+    printf("Controles: [S] Siguiente | [A] Anterior | [X] Salir\n");
+
+    while (actual != NULL) {
+        printf("\n==========================================================\n");
+        printf("[Tweet %d de %d]\n", indice, feed->cantidad);
+        printf("Autor: @%s%s\n", actual->data.autor, actual->autor_es_verificado ? " [✓ Verificado]" : "");
+        printf("Tweet ID: %d\n", actual->data.id);
+        printf("Contenido: %s\n", actual->data.contenido);
+        printf("==========================================================\n");
+        printf("Navegar ([S] Siguiente / [A] Anterior / [X] Salir): ");
+
+        if (scanf(" %c", &comando) != 1) break;
+
+        if (comando == 'S' || comando == 's') {
+            if (actual->siguiente != NULL) {
+                actual = actual->siguiente;
+                indice++;
+            } else {
+                printf("\n>>> [Límite alcanzado] Ya estás en el último tweet del feed. No hay más siguientes.\n");
+            }
+        } else if (comando == 'A' || comando == 'a') {
+            if (actual->anterior != NULL) {
+                actual = actual->anterior;
+                indice--;
+            } else {
+                printf("\n>>> [Límite alcanzado] Ya estás en el primer tweet del feed. No hay tweets anteriores.\n");
+            }
+        } else if (comando == 'X' || comando == 'x') {
+            printf("\nFinalizando Modo Historia y regresando al menú...\n");
+            break;
+        } else {
+            printf("\nOpción no válida. Presione 'S' para avanzar, 'A' para retroceder o 'X' para salir.\n");
+        }
+    }
+
+    /* Liberación crítica de la Lista Doblemente Enlazada */
+    liberarFeedInteractivo(feed);
+    free(feed);
+}

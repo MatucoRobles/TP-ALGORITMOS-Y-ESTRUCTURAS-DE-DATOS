@@ -88,4 +88,24 @@ int contarTweetsUsuario(ColaTweets* cola_tweets, const char* nombre_usuario);
 void mostrarTop5Verificados(ColaUsuarios* cola_usuarios, ColaTweets* cola_tweets);
 void liberarRanking(NodoRanking* cabeza);
 
+/* --- Entidad y Funciones: Feed Interactivo / Modo Historia (Lista Doblemente Enlazada) --- */
+typedef struct NodoTweetDoble {
+    Tweet data;
+    int autor_es_verificado;
+    struct NodoTweetDoble* anterior;
+    struct NodoTweetDoble* siguiente;
+} NodoTweetDoble;
+
+typedef struct {
+    NodoTweetDoble* cabeza;
+    NodoTweetDoble* cola;
+    int cantidad;
+} ListaDobleFeed;
+
+void inicializarListaDoble(ListaDobleFeed* lista);
+void agregarTweetListaDoble(ListaDobleFeed* lista, Tweet t, int es_verificado);
+ListaDobleFeed* crearFeedInteractivo(ColaTweets* cola_tweets, ColaUsuarios* cola_usuarios);
+void liberarFeedInteractivo(ListaDobleFeed* lista);
+void navegarFeedInteractivo(ColaTweets* cola_tweets, ColaUsuarios* cola_usuarios);
+
 #endif /* CWITTER_H */
